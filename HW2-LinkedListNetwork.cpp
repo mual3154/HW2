@@ -1,9 +1,8 @@
 // ==========================================
-// File: student starter code
-// Author: Matt Bubernak
-// Date: 1/29/2015
-// Modified: Fall 2016 E.S.Boese
-// Description: Linked List Fun
+// File: Homework 2
+// Author: Muntadher AlZayer
+// Date: 9/20/2016
+// Description: Linked List HW
 // ==========================================
 
 #include <iostream>
@@ -153,8 +152,25 @@ city* handleUserInput(city *head)
  */
 city* addCity(city *head, city *previous, string cityName )
 {
-
-		cout << "prev: " << previous->name << "  new: " << cityName << endl;
+	city* add = new city; //to distinguish and create the new node, i named it add
+	add->name = cityName;
+	city* tmp = new city;
+	tmp=head;
+	while(tmp != NULL && previous != tmp){
+	 tmp = tmp->next;	
+	}
+	if(tmp == NULL){
+		if(head == NULL){ // if the head is null then it creates a node for the head
+			head = add;
+			add->next = NULL;
+		}
+		return head;
+	}
+	else{
+		add->next = tmp->next; //the pointer for the new node will be the next of the prev node
+		tmp->next = add; // the prev node will now point to the new node
+	}
+	
 
     return head;
 }
@@ -169,8 +185,12 @@ city* addCity(city *head, city *previous, string cityName )
  */
 city *searchNetwork(city *ptr, string cityName)
 {
-    
-    return ptr;
+	city *tmp = new city;
+	tmp = ptr;
+	while(tmp != NULL && tmp->name != cityName){
+		tmp = tmp->next;
+	}
+    return tmp;
 }
 
 /*
@@ -180,11 +200,15 @@ city *searchNetwork(city *ptr, string cityName)
  */
 city* deleteEntireNetwork(city *ptr)
 {
-
-
+	city *tmp = new city;
+	while(ptr->next != NULL){
+		tmp = ptr->next;
 		cout << "deleting: " << ptr->name << endl;
-
-
+		delete ptr;
+		ptr = tmp;
+	} //stops at the last node, so we need to delete it and make ptr = null
+	cout << "deleting: " << ptr->name << endl;
+	delete ptr;
 
 	cout << "Deleted network" << endl;
     // return head, which should be NULL
@@ -194,15 +218,26 @@ city* deleteEntireNetwork(city *ptr)
 /* sends messages from file */
 void transmitMsg(city *head, string receiver, string message)
 {
+	city *sender = new city;
+	sender = head;
+
     if(head == NULL)
 	{
         cout << "Empty list" << endl;
         return;
     }
+	else{
+		while(sender != NULL && sender->name != receiver){
+			sender->numberMessages = sender->numberMessages + 1; //adds to the amount of times the city has intercepted a message
+			sender->message = message; //the message will be changed everytime for every city
+		    	cout << sender->name << " [# messages passed: " << sender->numberMessages << "] received: " << sender->message << endl;
+			sender = sender->next; // moves on to the next city
 
-
-
-    	cout << sender->name << " [# messages passed: " << sender->numberMessages << "] received: " << sender->message << endl;
+		} // when the destination city is found the same 3 lines of code above will run but will end in termination of the function
+		sender->numberMessages = sender->numberMessages +1;
+		sender->message = message;
+	    	cout << sender->name << " [# messages passed: " << sender->numberMessages << "] received: " << sender->message << endl;
+		}
 }
 
 
@@ -215,13 +250,20 @@ void transmitMsg(city *head, string receiver, string message)
 city* deleteCity(city *head, string cityName)
 {
 
-
-
-
-    // if the city dosn't exist, nothing we can do.
-	// 		use this output statement
+	city *tmp = new city; //will traverse the list
+	city *prev = new city; // will hold the previous city for tmp
+	tmp = head;
+	while(tmp != NULL && tmp->name != cityName){
+		prev = tmp; 
+		tmp = tmp->next;
+	}
+	if(tmp == NULL){
         cout << "City does not exist." << endl;
-
+	}
+	else{
+		prev->next = tmp->next; //changes the previous next pointer to skip the deleted node
+		delete tmp;
+	}
 
 
     return head;
@@ -236,10 +278,18 @@ void printPath(city *ptr)
 {
     cout << "== CURRENT PATH ==" << endl;
 
-    // If the head is NULL
-    if (ptr == NULL)
-        cout << "nothing in path" << endl;
-
+    if (ptr == NULL){
+        	cout << "nothing in path" << endl;
+	}
+	else{
+		city *tmp = new city; //to traverse the linked list
+		tmp = ptr;
+		while(tmp !=NULL){ //ends the traversal at the end of the list
+			cout << tmp->name << " -> ";
+			tmp = tmp->next;
+		}
+		cout << "NULL"<<endl; // prints null showing the end of the list
+	}
 
 
 
@@ -254,11 +304,19 @@ void printPath(city *ptr)
  */
 city* loadDefaultSetup(city *head)
 {
-    head = deleteEntireNetwork(head);
+//default network setup by adding all the cities after each other with tmp being the tail
     head = addCity(head,NULL,"Los Angeles");
-
-
-
+	city *tmp = new city;
+	tmp = head;
+	addCity(head,tmp,"Pheonix");
+	tmp = tmp->next;
+	addCity(head,tmp,"Denver");
+	tmp = tmp->next;
+	addCity(head,tmp,"Dallas");
+	tmp = tmp->next;
+	addCity(head,tmp,"Atlanta");
+	tmp = tmp->next;
+	addCity(head,tmp,"New York");
     return head;
 }
 
