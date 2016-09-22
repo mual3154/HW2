@@ -156,6 +156,10 @@ city* addCity(city *head, city *previous, string cityName )
 	add->name = cityName;
 	city* tmp = new city;
 	tmp=head;
+	if(previous == NULL){
+		add->next = head;
+		head = add;
+	}
 	while(tmp != NULL && previous != tmp){
 	 tmp = tmp->next;	
 	}
@@ -249,10 +253,15 @@ void transmitMsg(city *head, string receiver, string message)
  */
 city* deleteCity(city *head, string cityName)
 {
-
 	city *tmp = new city; //will traverse the list
 	city *prev = new city; // will hold the previous city for tmp
 	tmp = head;
+	if(cityName == head->name){
+		tmp = head->next;
+		delete head;
+		head = tmp;
+		return head;
+	}
 	while(tmp != NULL && tmp->name != cityName){
 		prev = tmp; 
 		tmp = tmp->next;
